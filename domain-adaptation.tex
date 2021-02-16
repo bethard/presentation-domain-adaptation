@@ -1,0 +1,116 @@
+% !TEX TS-program = pdflatexmk
+
+\documentclass[14pt]{beamer}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage[english]{babel}
+
+% Define UA colors
+% https://brand.arizona.edu/guide/color
+\definecolor{ua-red}{HTML}{AB0520}
+\definecolor{ua-blue}{HTML}{0C234B}
+
+\mode<presentation>{
+\usetheme{Madrid}
+\usecolortheme[named=ua-red]{structure}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{section in toc}[square]
+\setbeamertemplate{subsection in toc}[square]
+\setbeamertemplate{items}[square]
+\setbeamercovered{transparent=0}
+}
+
+\author[Bethard]{Dr. Steven Bethard}
+\institute[Arizona]{%
+School of Information\\
+University of Arizona}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\title{Adapting natural language processing models across clinical domains}
+\date[]{26 Feb 2021}
+
+
+\begin{document}
+
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Domain adaptation is critical for clinical NLP}
+
+\begin{frame}{Machine learning needs domain adaptation}
+% example of parsing times and punctuation?
+% followed by table of performance drops
+\end{frame}
+
+\begin{frame}{Domain adaptation is hard}
+% new phrases
+% new distribution of labels for old phrases
+\end{frame}
+
+\begin{frame}{Clinical domain adaptation is even harder}
+% differences across institutions
+% data sharing constraints
+% etc.
+\end{frame}
+
+\section{Domain adaptation comes in many forms}
+
+\begin{frame}{Taxonomy of domain adaptation}
+% from JAMIA Open
+\end{frame}
+
+\begin{frame}{Frustratingly easy domain adaptation}
+% diagram of method
+% why it doesn't work for Clinical NLP
+\end{frame}
+
+\begin{frame}{Self-training}
+% maybe the tri-training paper?
+% diagram of method
+% why it doesn't work for Clinical NLP
+\end{frame}
+
+\section{Domain adaptation for clinical information extraction}
+
+\begin{frame}{Source-free domain adaptation}
+% summarize shared tasks: negation and time
+\end{frame}
+
+\begin{frame}{Source-free self-training}
+% Xin's results
+\end{frame}
+
+\begin{frame}{Online active learning}
+% any results from Xin
+\end{frame}
+
+\section{Domain adaptation for clinical concept normalization}
+
+\begin{frame}{Clinical concept normalization}
+\end{frame}
+
+\begin{frame}{Normalization as vector-space search}
+\end{frame}
+
+\begin{frame}{Domain adaptation without retraining}
+\end{frame}
+
+\section*{Summary and future work}
+
+\begin{frame}{Summary}
+\end{frame}
+
+\begin{frame}{Future work}
+\end{frame}
+
+
+\end{document}
