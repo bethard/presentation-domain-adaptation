@@ -4,6 +4,9 @@
 \usepackage{newtxtext,newtxmath}
 \usepackage{microtype}
 \usepackage[english]{babel}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
 
 % Define UA colors
 % https://brand.arizona.edu/guide/color
@@ -46,9 +49,153 @@ University of Arizona}
 
 \section{Domain adaptation is critical for clinical NLP}
 
-\begin{frame}{Machine learning needs domain adaptation}
-% example of parsing times and punctuation?
-% followed by table of performance drops
+\begin{frame}{Machine learning needs adaptation}
+\small
+\begin{tikzpicture}[data/.style={font=\scriptsize}]
+
+\node[data, label={Source Domain}] (source-data) at (0, 0) {
+\begin{tabular}{@{} l l @{}}
+\toprule
+Input & Output \\
+\midrule
+Dec 5, 2007 & 2007-12-05 \\
+3 Jan 2018 & 2018-01-03 \\
+04-25-1990 & 1990-04-25 \\
+\ldots & \ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[label={Learned Model}, inner sep=0pt] (model) at (5, 0) {\includegraphics{Hey_Machine_Learning_Logo.png}};
+
+\draw[ultra thick, -latex]  (source-data)  -- node[align=center] {Machine \\ Learning} (model);
+
+\visible<2->{
+\node[data, label={Target Domain}, anchor=south west] (target-data) at (7, 0.5) {
+\begin{tabular}{@{} p{9em} @{}}
+\toprule
+Input \\
+\midrule
+3 weeks postoperative \\
+1 tablet q.i.d \\
+75-year-old \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+\draw[ultra thick, -latex]  (target-data.south west)  -- (model.east);
+}
+
+\visible<3->{
+\node[data, anchor=north west] (output) at (7, -0.5) {
+\begin{tabular}{@{} p{9em} @{}}
+\toprule
+Output \\
+\midrule
+??? \\
+??? \\
+??? \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (model.east)  -- (output.north west);
+}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Machine learning needs adaptation}
+A sample of recent NLP models, trained on a source domain, and tested on a target domain:
+
+\bigskip
+\footnotesize
+\begin{tabular}{ l l l l l }
+\toprule
+& \multicolumn{2}{c}{Source} & \multicolumn{2}{c}{Target} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Task & Domain & Score & Domain & Score \\
+\midrule
+Sentences & Mayo Clinic & 94.9 A & BIDMC ICU & 31.8 A \\
+Syntax trees & Wall Street Journal & 89 $F_1$ & Medline abstracts & 75 $F_1$ \\
+Negations & Partners Healthcare & 93.6 $F_1$ & Mayo Clinic & 74.7 $F_1$ \\
+Times & Mayo colon cancer & 80 $F_1$ & Mayo brain cancer & 59 $F_1$ \\
+\ldots \\
+\bottomrule
+\end{tabular}
+
+\centering
+\smallskip
+Full table in \cite{laparra:JAMIAOpen:2020}
+\end{frame}
+
+\begin{frame}{Domain adaptive machine learning}
+\small
+\begin{tikzpicture}[data/.style={font=\scriptsize}]
+
+\node[data, label={Source Domain}] (source-data) at (0, 2) {
+\begin{tabular}{@{} l l @{}}
+\toprule
+Input & Output \\
+\midrule
+Dec 5, 2007 & 2007-12-05 \\
+3 Jan 2018 & 2018-01-03 \\
+04-25-1990 & 1990-04-25 \\
+\ldots & \ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[data, label={Target Domain}] (target-data) at (0, -2) {
+\begin{tabular}{@{} l l @{}}
+\toprule
+Input & \color{lightgray} Output\\
+\midrule
+1 week postop &  \color{lightgray} 2011-07-06 \\
+2 tablets b.i.d. &  \color{lightgray} 2$\times$2$\times$P1D \\
+40-year-old &  \color{lightgray} P40Y \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[label={Learned Model}, inner sep=0pt] (model) at (5, 0) {\includegraphics{Hey_Machine_Learning_Logo.png}};
+
+\node[align=center] at (2.8, 0) {Machine \\ Learning};
+
+\draw[ultra thick, -latex]  (source-data)  -- (model);
+\draw[ultra thick, -latex]  (target-data)  -- (model);
+
+\visible<2->{\node[data, anchor=south west] (input) at (7, 0.5) {
+\begin{tabular}{@{} p{9em} @{}}
+\toprule
+Input \\
+\midrule
+3 weeks postoperative \\
+1 tablet q.i.d. \\
+75-year-old \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[data, anchor=north west] (output) at (7, -0.5) {
+\begin{tabular}{@{} p{9em} @{}}
+\toprule
+Output \\
+\midrule
+2011-07-20 \\
+1$\times$4$\times$P1D \\
+P70Y \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (input.south west)  -- (model.east);
+\draw[ultra thick, -latex]  (model.east)  -- (output.north west);
+}
+\end{tikzpicture}
 \end{frame}
 
 \begin{frame}{Domain adaptation is hard}
@@ -110,6 +257,14 @@ University of Arizona}
 \end{frame}
 
 \begin{frame}{Future work}
+\end{frame}
+
+\appendix
+
+\begin{frame}[allowframebreaks]
+        \frametitle{References}
+        \bibliographystyle{apalike}
+        \bibliography{domain-adaptation.bib}
 \end{frame}
 
 
