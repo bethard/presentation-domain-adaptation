@@ -29,13 +29,6 @@
 School of Information\\
 University of Arizona}
 
-\AtBeginSection[]
-{
-  \begin{frame}<beamer>{Outline}
-    \tableofcontents[currentsection]
-  \end{frame}
-}
-
 \title{Adapting natural language processing models across clinical domains}
 \date[]{26 Feb 2021}
 
@@ -47,7 +40,7 @@ University of Arizona}
   \titlepage
 \end{frame}
 
-\section{Domain adaptation is critical for clinical NLP}
+\section{Machine learning needs domain adaptation}
 
 \begin{frame}{Machine learning needs adaptation}
 \small
@@ -199,15 +192,56 @@ P70Y \\
 \end{frame}
 
 \begin{frame}{Domain adaptation is hard}
-% new phrases
-% new distribution of labels for old phrases
+New label distributions for known phrases
+\begin{itemize}
+\item E.g., the word \textit{day}
+\begin{itemize}
+\item in news text is 68\% \textsc{Period}, 32\% \textsc{Calendar-Interval}
+\item in clinical text is 6\% \textsc{Period}, 94\% \textsc{Calendar-Interval}
+\end{itemize}
+\end{itemize}
+
+\pause
+\bigskip
+New phrases for known concepts
+\begin{itemize}
+\item E.g., \textit{q.i.d} meaning \textit{4 times per day}
+\end{itemize}
+
+\pause
+\bigskip
+New concepts
+\begin{itemize}
+\item E.g., \textit{lean season} or \textit{tef season}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Clinical domain adaptation is even harder}
-% differences across institutions
-% data sharing constraints
-% etc.
+\begin{itemize}
+\item Doctors notes vary wildly in format, style, and word choice depending on both medical institution and medical specialty
+\begin{itemize}
+\item E.g., for years cTAKES assumed newlines ended sentences because this was true in the Mayo Clinic EMR
+\end{itemize}
+\pause
+\item Data is hard to share, due to protected health information
+\begin{itemize}
+\item IRB approvals and data use agreements can be complex
+\item Previously approved data cannot be distributed without sustained funding (e.g., the Mayo Clinic's THYME corpus)
+\item Many annotated datasets will never leave their original institution in any form
+\end{itemize}
+\end{itemize}
 \end{frame}
+
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
 
 \section{Domain adaptation comes in many forms}
 
