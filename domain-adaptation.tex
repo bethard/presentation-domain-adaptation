@@ -276,7 +276,7 @@ Trained models & Raw text & ??? \\
   },
 ]
 
-\node[doc,label={Source Domain}] (source-docs) at (-4, 1.5) {};
+\node[doc,label={Source Domain}] (source-docs) at (-4, 1.5) {+1};
 
 \node[data] (source-features) at (0, 1.5) {
 \setlength{\tabcolsep}{0.5em}
@@ -291,7 +291,7 @@ Features & Source & Target & Label \\
 \end{tabular}
 };
 
-\node[doc,label={Target Domain}] (target-docs) at (-4, -1.5) {};
+\node[doc,label={Target Domain}] (target-docs) at (-4, -1.5) {-1};
 
 \node[data] (target-features) at (0, -1.5) {
 \setlength{\tabcolsep}{0.5em}
@@ -314,6 +314,7 @@ Features & Source & Target & Label \\
 \draw[ultra thick, -latex]  (target-features.east)  -- (model);
 
 \end{tikzpicture}
+
 Assumptions:
 \begin{itemize}
 \item Source shares labeled text
@@ -321,10 +322,89 @@ Assumptions:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Self-training}
+\begin{frame}{Self-training \hfill\small e.g., \cite{yarowsky-1995-unsupervised,ruder-plank-2018-strong}}
 % maybe the tri-training paper?
 % diagram of method
 % why it doesn't work for Clinical NLP
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+  doc/.style={
+    draw, minimum height=3em, minimum width=2em, fill=white,
+    double copy shadow={shadow xshift=-4pt, shadow yshift=-4pt, fill=white, draw}
+  },
+]
+
+\node[doc,label={Source Domain}] (source-docs) at (-2, 1.5) {+1};
+
+\node[data,anchor=west] (source-features) at (0, 1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c c @{}}
+\toprule
+Features & Label \\
+\midrule
+0 1 0 0 & +1\\
+1 0 1 0 & -1\\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[label={Learned Model}, inner sep=0pt] (model) at (6, 1.5) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+
+\draw[ultra thick, -latex]  (source-docs) -- (source-features);
+\draw[ultra thick, -latex]  (source-features.east)  -- (model);
+
+\node[doc,label={Target Domain}] (target-docs) at (-2, -1.5) {?};
+
+\visible<2->{
+\node[data,anchor=west] (target-features) at (0, -1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Features  \\
+\midrule
+1 1 1 0 \\
+0 0 1 1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (target-docs) -- (target-features);
+\draw[ultra thick, -latex]  (target-features.north)  -- (model);
+}
+
+\visible<3->{
+\node[data] (target-labels) at (2.5, -1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Labels  \\
+\midrule
++1 \\
++1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (model)  -- (target-labels.north);
+}
+
+\visible<4->{
+\node[label={Self-trained Model}, inner sep=0pt] (st-model) at (6, -1.5) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+
+\draw [draw, thick] (-0.3,-2.8) rectangle (3.4,2.8);
+\draw[ultra thick, -latex]  (3.4, -1.5)  -- (st-model);
+}
+\end{tikzpicture}
+
+Assumptions:
+\begin{itemize}
+\item Source shares labeled text
+\item Target has raw text
+\end{itemize}
 \end{frame}
 
 \section{Domain adaptation for clinical information extraction}
