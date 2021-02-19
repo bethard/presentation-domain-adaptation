@@ -4,14 +4,18 @@
 \usepackage{newtxtext,newtxmath}
 \usepackage{microtype}
 \usepackage[english]{babel}
+\usepackage{array}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{tikz}
+\usetikzlibrary{shadows}
+
 
 % Define UA colors
-% https://brand.arizona.edu/guide/color
+% https://brand.arizona.edu/applying-the-brand/colors
 \definecolor{ua-red}{HTML}{AB0520}
 \definecolor{ua-blue}{HTML}{0C234B}
+\definecolor{ua-oasis}{HTML}{378DBD}
 
 \mode<presentation>{
 \usetheme{Madrid}
@@ -246,12 +250,75 @@ New concepts
 \section{Domain adaptation comes in many forms}
 
 \begin{frame}{Taxonomy of domain adaptation}
-% from JAMIA Open
+\begin{tabular}{ l l l }
+\toprule
+Souce shares & Target has & Example approach \\
+\midrule
+\pause
+Labeled text & Labeled text & Feature augmentation \\
+\pause
+Labeled text & Raw text & Self-training \\
+\pause
+Trained models & Labeled text & Fine-tuning \\
+\pause
+Trained models & Raw text & ??? \\
+\bottomrule
+\end{tabular}
 \end{frame}
 
-\begin{frame}{Frustratingly easy domain adaptation}
-% diagram of method
-% why it doesn't work for Clinical NLP
+\begin{frame}{Feature augmentation \hfill\small e.g., \cite{daume-iii-2007-frustratingly}}
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+  doc/.style={
+    draw, minimum height=3em, minimum width=2em, fill=white,
+    double copy shadow={shadow xshift=-4pt, shadow yshift=-4pt, fill=white, draw}
+  },
+]
+
+\node[doc,label={Source Domain}] (source-docs) at (-4, 1.5) {};
+
+\node[data] (source-features) at (0, 1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c >{\color{ua-red}}c >{\color{ua-oasis}}c c @{}}
+\toprule
+Features & Source & Target & Label \\
+\midrule
+0 1 0 0 & 0 1 0 0 & 0 0 0 0 & +1\\
+1 0 1 0 & 1 0 1 0 & 0 0 0 0 & -1\\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[doc,label={Target Domain}] (target-docs) at (-4, -1.5) {};
+
+\node[data] (target-features) at (0, -1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c >{\color{ua-red}}c >{\color{ua-oasis}}c c @{}}
+\toprule
+Features & Source & Target & Label \\
+\midrule
+1 1 1 0 & 0 0 0 0 & 1 1 1 0 & -1 \\
+0 0 1 1 & 0 0 0 0 & 0 0 1 1 & +1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[label={Learned Model}, inner sep=0pt] (model) at (5, 0) {\includegraphics{Hey_Machine_Learning_Logo.png}};
+
+\draw[ultra thick, -latex]  (source-docs) -- (source-features);
+\draw[ultra thick, -latex]  (source-features.east)  -- (model);
+\draw[ultra thick, -latex]  (target-docs) -- (target-features);
+\draw[ultra thick, -latex]  (target-features.east)  -- (model);
+
+\end{tikzpicture}
+Assumptions:
+\begin{itemize}
+\item Source shares labeled text
+\item Target has (small amounts of) labeled text
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Self-training}
