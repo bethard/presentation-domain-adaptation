@@ -28,6 +28,13 @@
 \setbeamercovered{transparent=0}
 }
 
+\tikzset{
+  doc/.style={
+    draw, minimum height=3em, minimum width=2em, fill=white,
+    double copy shadow={shadow xshift=-4pt, shadow yshift=-4pt, fill=white, draw}
+  },
+}
+
 \author[Bethard]{Dr. Steven Bethard}
 \institute[Arizona]{%
 School of Information\\
@@ -270,10 +277,6 @@ Trained models & Raw text & ??? \\
 \begin{tikzpicture}[
   font=\small,
   data/.style={font=\footnotesize, inner sep=0pt},
-  doc/.style={
-    draw, minimum height=3em, minimum width=2em, fill=white,
-    double copy shadow={shadow xshift=-4pt, shadow yshift=-4pt, fill=white, draw}
-  },
 ]
 
 \node[doc,label={Source Domain}] (source-docs) at (-4, 1.5) {+1};
@@ -323,16 +326,9 @@ Assumptions:
 \end{frame}
 
 \begin{frame}{Self-training \hfill\small e.g., \cite{yarowsky-1995-unsupervised,ruder-plank-2018-strong}}
-% maybe the tri-training paper?
-% diagram of method
-% why it doesn't work for Clinical NLP
 \begin{tikzpicture}[
   font=\small,
   data/.style={font=\footnotesize, inner sep=0pt},
-  doc/.style={
-    draw, minimum height=3em, minimum width=2em, fill=white,
-    double copy shadow={shadow xshift=-4pt, shadow yshift=-4pt, fill=white, draw}
-  },
 ]
 
 \node[doc,label={Source Domain}] (source-docs) at (-2, 1.5) {+1};
@@ -405,6 +401,75 @@ Assumptions:
 \item Source shares labeled text
 \item Target has raw text
 \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Fine-tuning \hfill\small e.g., \cite{yosinski:NIPS:2014,lee-etal-2018-transfer}}
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+]
+
+\node[doc,label={Source Domain}] (source-docs) at (-2, 1.4) {+1};
+
+\node[data,anchor=west] (source-features) at (0, 1.4) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c c @{}}
+\toprule
+Features & Label \\
+\midrule
+0 1 0 0 & +1\\
+1 0 1 0 & -1\\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node[label={Learned Model}, inner sep=0pt] (model) at (6, 1.4) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+
+\draw[ultra thick, -latex]  (source-docs) -- (source-features);
+\draw[ultra thick, -latex]  (source-features.east)  -- (model);
+
+\visible<2->{
+\node[doc,label={Target Domain}] (target-docs) at (-2, -1.4) {-1};
+
+\node[data,anchor=west] (target-features) at (0, -1.4) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c c @{}}
+\toprule
+Features & Label \\
+\midrule
+1 1 1 0 & -1 \\
+0 0 1 1 & +1\\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (target-docs) -- (target-features);
+
+\node[label=below:{Fine-tuned Model}, inner sep=0pt] (ft-model) at (6, -1.4) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+
+\draw[ultra thick, -latex]  (model)  -- (ft-model);
+\draw[ultra thick, -latex]  (target-features)  -- (ft-model);
+}
+\end{tikzpicture}
+
+\begin{columns}
+\begin{column}{0.46\textwidth}
+Assumptions:
+\begin{itemize}
+\item Source shares model
+\item Target has labeled text
+\end{itemize}
+\end{column}
+\begin{column}<3->{0.53\textwidth}
+Dangers:
+\begin{itemize}
+\item Catastrophic forgetting \small\cite{mccloskey:PLM:1989}
+\end{itemize}
+\end{column}
+\end{columns}
 \end{frame}
 
 \section{Domain adaptation for clinical information extraction}
