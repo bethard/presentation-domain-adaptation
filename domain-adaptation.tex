@@ -33,6 +33,11 @@
     draw, minimum height=3em, minimum width=2em, fill=white,
     double copy shadow={shadow xshift=-4pt, shadow yshift=-4pt, fill=white, draw}
   },
+  ml model/.style={
+    node contents={\includegraphics[scale=#1]{Hey_Machine_Learning_Logo.png}},
+    inner sep=0pt,
+  },
+  ml model/.default={1},
 }
 
 \author[Bethard]{Dr. Steven Bethard}
@@ -70,7 +75,7 @@ Dec 5, 2007 & 2007-12-05 \\
 \end{tabular}
 };
 
-\node[label={Learned Model}, inner sep=0pt] (model) at (5, 0) {\includegraphics{Hey_Machine_Learning_Logo.png}};
+\node (model) at (5, 0) [ml model, label={Learned Model}];
 
 \draw[ultra thick, -latex]  (source-data)  -- node[align=center] {Machine \\ Learning} (model);
 
@@ -163,7 +168,7 @@ Input & \color{lightgray} Output\\
 \end{tabular}
 };
 
-\node[label={Learned Model}, inner sep=0pt] (model) at (5, 0) {\includegraphics{Hey_Machine_Learning_Logo.png}};
+\node (model) at (5, 0)  [ml model, label={Learned Model}];
 
 \node[align=center] at (2.8, 0) {Machine \\ Learning};
 
@@ -309,7 +314,7 @@ Features & Source & Target & Label \\
 \end{tabular}
 };
 
-\node[label={Learned Model}, inner sep=0pt] (model) at (5, 0) {\includegraphics{Hey_Machine_Learning_Logo.png}};
+\node (model) at (5, 0) [ml model=0.8, label={Learned Model}];
 
 \draw[ultra thick, -latex]  (source-docs) -- (source-features);
 \draw[ultra thick, -latex]  (source-features.east)  -- (model);
@@ -346,7 +351,7 @@ Features & Label \\
 \end{tabular}
 };
 
-\node[label={Learned Model}, inner sep=0pt] (model) at (6, 1.5) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+\node (model) at (6, 1.5) [ml model=0.8, label={Learned Model}];
 
 \draw[ultra thick, -latex]  (source-docs) -- (source-features);
 \draw[ultra thick, -latex]  (source-features.east)  -- (model);
@@ -389,7 +394,7 @@ Labels  \\
 }
 
 \visible<4->{
-\node[label={Self-trained Model}, inner sep=0pt] (st-model) at (6, -1.5) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+\node (st-model) at (6, -1.5)  [ml model=0.8, label={Self-trained Model}];
 
 \draw [draw, thick] (-0.3,-2.8) rectangle (3.4,2.8);
 \draw[ultra thick, -latex]  (3.4, -1.5)  -- (st-model);
@@ -425,7 +430,7 @@ Features & Label \\
 \end{tabular}
 };
 
-\node[label={Learned Model}, inner sep=0pt] (model) at (6, 1.4) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+\node (model) at (6, 1.4)  [ml model=0.8, label={Learned Model}];
 
 \draw[ultra thick, -latex]  (source-docs) -- (source-features);
 \draw[ultra thick, -latex]  (source-features.east)  -- (model);
@@ -448,7 +453,7 @@ Features & Label \\
 
 \draw[ultra thick, -latex]  (target-docs) -- (target-features);
 
-\node[label=below:{Fine-tuned Model}, inner sep=0pt] (ft-model) at (6, -1.4) {\includegraphics[scale=0.8]{Hey_Machine_Learning_Logo.png}};
+\node (ft-model) at (6, -1.4) [ml model=0.8, label=below:{Fine-tuned Model}];
 
 \draw[ultra thick, -latex]  (model)  -- (ft-model);
 \draw[ultra thick, -latex]  (target-features)  -- (ft-model);
