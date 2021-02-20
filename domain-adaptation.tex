@@ -9,6 +9,8 @@
 \usepackage{graphicx}
 \usepackage{tikz}
 \usetikzlibrary{shadows}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.multipart}
 
 
 % Define UA colors
@@ -39,6 +41,33 @@
   },
   ml model/.default={1},
 }
+
+% command for annotating words in text
+% #1: drawing options
+% #2: name of entire shape
+% #3: number of parts
+% #4: name of baseline part
+% #5: annotation type
+% #6: node text following \nodepart{two}
+\newcommand{\annotate}[6][]{%
+\tikz[remember picture,baseline={(#2.#4)}]{%
+\node[
+  rectangle split,
+  rectangle split parts=#3,
+  thick,
+  inner sep=2pt,
+  align=center,
+  draw,
+  #1]%
+(#2)
+{%
+\scriptsize\strut\textsc{#5}%
+\nodepart{two}%
+#6%
+\strut};}}
+
+\newcommand{\AnnotateTwo}[4][]{\annotate[#1]{#2}{2}{two}{#3}{#4}}
+
 
 \author[Bethard]{Dr. Steven Bethard}
 \institute[Arizona]{%
@@ -479,8 +508,110 @@ Dangers:
 
 \section{Domain adaptation for clinical information extraction}
 
-\begin{frame}{Source-free domain adaptation}
-% summarize shared tasks: negation and time
+\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing}
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+]
+
+\node[doc,label={Source Domain}] (source-docs) at (-3, 1.4) {+1};
+
+\node[data] (source-features) at (0, 1.4) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c c @{}}
+\toprule
+Features & Label \\
+\midrule
+0 1 0 0 & +1\\
+1 0 1 0 & -1\\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\node (provided-model) at (3.5, 1.4)  [ml model=0.8, label={Provided Model}];
+
+\draw[ultra thick, -latex]  (source-docs) -- (source-features);
+\draw[ultra thick, -latex]  (source-features.east)  -- (provided-model);
+
+\node[doc,label={Target Domain}] (target-docs) at (-3, -1.4) {?};
+
+\node[draw,cloud,aspect=2,ua-red,ultra thick] (participant) at (0, -1.4) {Participant};
+
+\draw[ultra thick, -latex]  (target-docs) -- (participant);
+\draw[ultra thick, -latex]  (provided-model) -- (participant);
+
+\node (adapted-model) at (3.5, -1.4)  [ml model=0.8, label={Adapted Model}];
+
+\draw[ultra thick, -latex]  (participant) -- (adapted-model);
+
+\node[data,anchor=west] (target-labels) at (5.5, -1.4) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Label \\
+\midrule
+-1 \\
++1\\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (adapted-model) -- (target-labels);
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing}
+\begin{columns}
+\begin{column}{0.45\textwidth}
+\begin{block}{Task: Negation}
+\small
+Has frequent \AnnotateTwo{diarrhea}{}{diarrhea}, but no new \AnnotateTwo{lumps}{Negated}{lumps} or \AnnotateTwo{masses}{Negated}{masses}\ldots
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Task: Time Expressions}
+\small
+In \AnnotateTwo{month}{Month-Of-Year}{January} of \AnnotateTwo{year}{Year}{2009}, she had pain \AnnotateTwo{number}{Number}{four} \AnnotateTwo{period}{Period}{hours} \AnnotateTwo{after}{After}{after}\ldots
+\end{block}
+\end{column}
+\end{columns}
+
+\pause
+\bigskip
+\begin{tabular}{@{} l l l @{}}
+\toprule
+& Negation & Time Expressions  \\
+\midrule
+Trained model & Mayo Clinic & Mayo Clinic \\
+Dev data & Partners HealthCare & News \\
+Test data & Beth Israel ICU & Food Insecurity \\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing}
+
+
+\begin{tabular}{ l c c c c c c }
+\toprule
+& \multicolumn{3}{c}{Negation} & \multicolumn{3}{c}{Time Expressions} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+System & P & R & $F_1$ & P & R & $F_1$ \\
+\midrule
+Top participant & 90.2 & 75.6 & \alert<3>{82.2} & 84.7 & 78.5 & \alert<3>{81.5} \\
+Fine-tune on dev & 90.8 & 61.1 & \alert<2-3>{73.0} & 82.7 & 78.2 & \alert<2-3>{80.4} \\
+Provided model & 91.7 & 51.6 & \alert<2>{66.0} & 84.9 & 74.6 & \alert<2>{79.4} \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+Findings:
+\begin{itemize}
+\item<2-> Fine-tuning on dev domain helps; no catastrophic forgetting, and despite test domain being different
+\item<3-> Participant systems made larger gains on negation than time expressions
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Source-free self-training}
