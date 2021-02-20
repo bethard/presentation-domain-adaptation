@@ -614,12 +614,118 @@ Findings:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Source-free self-training}
-% Xin's results
+\begin{frame}{Source-free self-trained fine-tuning}
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+]
+
+\node (provided-model) at (1.5, 1.5) [ml model=0.8, label={Provided Model}];
+
+\node[doc,label={Target Domain}] (target-docs) at (-2, -1.5) {?};
+
+\node[data,anchor=west] (target-features) at (0, -1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Features  \\
+\midrule
+1 1 1 0 \\
+0 0 1 1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (target-docs) -- (target-features);
+\draw[ultra thick, -latex]  (target-features.north)  -- (provided-model.south);
+
+\node[data] (target-labels) at (2.5, -1.5) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Labels  \\
+\midrule
++1 \\
++1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (provided-model.south)  -- (target-labels.north);
+
+\node (st-model) at (6, -1.5)  [ml model=0.8, label={Adapted Model}];
+
+\draw[ultra thick, -latex]  (provided-model)  -- (st-model);
+\draw[ultra thick, -latex]  (target-labels)  -- (st-model);
+\end{tikzpicture}
+
+\bigskip
+Results:
+\begin{itemize}
+\item XX gain on negation, YY gain on time expressions
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Online active learning}
-% any results from Xin
+
+\begin{frame}{Source-free active-learned fine-tuning}
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+]
+
+\node (provided-model) at (4, 1.4) [ml model=0.8, label={Provided Model}];
+
+\node[doc,label={Target Domain}] (target-docs) at (-2, 1.4) {?};
+
+\node (human) at (-2, -1.4)  {\includegraphics[scale=0.5]{female-user.pdf}};
+
+\draw[ultra thick, -latex,align=center]  (target-docs) --  node[auto,swap,pos=0.75] {Select $k$ \\ by XX} (human);
+
+\node[data,anchor=west] (target-features) at (0, 1.4) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Features  \\
+\midrule
+1 1 1 0 \\
+0 0 1 1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (target-docs) -- (target-features);
+
+\node[data,anchor=west] (target-labels) at (0, -1.4) {
+\setlength{\tabcolsep}{0.5em}
+\begin{tabular}{@{} c @{}}
+\toprule
+Labels  \\
+\midrule
++1 \\
++1 \\
+\ldots \\
+\bottomrule
+\end{tabular}
+};
+
+\draw[ultra thick, -latex]  (human) -- (target-labels);
+
+\node (st-model) at (4, -1.4)  [ml model=0.8, label=below:{Adapted Model}];
+
+\draw[ultra thick, -latex]  (provided-model)  -- (st-model);
+\draw[ultra thick, -latex]  (target-features)  -- (st-model);
+\draw[ultra thick, -latex]  (target-labels)  -- (st-model);
+\end{tikzpicture}
+
+Results:
+\begin{itemize}
+\item Selecting only 20 yields YY gain on time expressions
+\item No gain for any $k$ with non-expert annotators
+\end{itemize}
+
 \end{frame}
 
 \section{Domain adaptation for clinical concept normalization}
