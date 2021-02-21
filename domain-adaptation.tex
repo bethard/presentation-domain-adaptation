@@ -8,6 +8,8 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{tikz}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
 \usetikzlibrary{shadows}
 \usetikzlibrary{shapes}
 \usetikzlibrary{shapes.multipart}
@@ -41,6 +43,9 @@
   },
   ml model/.default={1},
 }
+
+\newcommand{\randval}{\pgfmathparse{random(0,99)/10}\pgfmathprintnumber[precision=1,fixed,fixed zerofill]{\pgfmathresult}}
+\newcommand{\randvec}{[\randval{} \randval{} \ldots]}
 
 % command for annotating words in text
 % #1: drawing options
@@ -741,13 +746,134 @@ Results:
 
 \section{Domain adaptation for clinical concept normalization}
 
-\begin{frame}{Clinical concept normalization}
+\begin{frame}[t]{Clinical concept normalization}
+
+I felt like \AnnotateTwo[draw=ua-red]{vomiting}{\visible<2->{C0042963}}{vomiting}, and my \AnnotateTwo[draw=ua-red]{spinning}{\visible<2->{C0012833}}{head was spinning a little}.
+
+\bigskip
+\only<3->{
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north, inner sep=0pt, below=3em of vomiting]
+  (umls-vomiting)
+  {\includegraphics[width=0.45\textwidth]{umls-vomiting.png}}
+  edge[ua-red,ultra thick,dotted,latex-] (vomiting);
+\node[anchor=north, inner sep=0pt, below=3em of spinning]
+  (umls-dizziness)
+  {\includegraphics[width=0.45\textwidth]{umls-dizziness.png}}
+  edge[ua-red,ultra thick,dotted,latex-] (spinning);
+\node[draw,fit=(umls-vomiting) (umls-dizziness), inner sep=1em, label=below:{Unified Medical Language System (UMLS)}] {};
+\end{tikzpicture}
+}
 \end{frame}
 
 \begin{frame}{Normalization as vector-space search}
+\begin{tikzpicture}[font=\small, inner sep=2pt, anchor=west]
+\pgfmathsetseed{42}
+
+\node[ua-red] at (0, 1.25) {\large Text};
+\node<4-> at (4.8, 1.25) {\large Score};
+\node[ua-oasis] at (9.3, 1.25) {\large UMLS};
+
+\node[align=center,ua-red] (text) at (0, 0) {head was \\ spinning \\ a little};
+\node<2->[ua-red] (text-vec) at (2.3, 0) {\small\randvec}
+  edge[ua-red, ultra thick, latex-] (text);
+\foreach[count=\i from 0, count=\slide from 4] \term/\vec/\score in {
+    vertigo\\(C0042571)/\randvec/0.7,
+    spinning gait\\(C0427152)/\randvec/0.1,
+    head\\(C0018670)/\randvec/0.2,
+    dizziness\\(C0012833)/\randvec/0.9} {
+  \node[ua-oasis, align=center] (umls-\i) at (9.3, -1.5*\i) {\term};
+  \node<3->[ua-oasis] (umls-vec-\i) at (6.5, -1.5*\i) {\vec}
+    edge[ua-oasis, ultra thick, latex-] (umls-\i);
+  \node<\slide-> (score-\i) at (5.2, -1.5*\i) {\score}
+    edge[ua-oasis, ultra thick, latex-] (umls-vec-\i);
+  \draw<\slide->[ua-red, ultra thick, -latex] (text-vec.east) -- (score-\i.west);
+}
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Triplet training a vector-space transformer}
+Goal: train a term-to-vector network using UMLS
+
+Approach:
+\begin{itemize}
+\item Create triplets of input term $t_i$, match $t_p$, mis-match $t_n$
+\item Train network so $t_i$ is more similar to $t_p$ than $t_n$
+\end{itemize}
+
+\pause
+\centering
+\begin{tikzpicture}[font=\small, text only/.style={inner sep=2pt, align=center}]
+\node[text only]
+  (L)
+  at (0, 4)
+  {$L = \ln{(1 + e^{Sim(V(t_i), V(t_{n})) - Sim(V(t_i), V(t_{p}))} )})$};
+\foreach \i/\name/\textcolor/\phrase in {
+    -4/p/ua-red/heart\\attack,
+    0/i/ua-red!50!ua-blue/myocardial\\infarction,
+    4/n/ua-blue/cardiovascular\\infections} {
+  \node[text only, text=\textcolor]
+    (input-\name)
+    at (\i, 0)
+    {$t_{\name}$ \\ \phrase};
+  \node[draw, align=center, fill=yellow, fill opacity=0.5, text opacity=1]
+    (bert-\name)
+    at (\i, 1.7)
+    {PubMed-BERT\\transformer}
+    edge[latex-] (input-\name);
+  \node[text only,text=\textcolor]
+    (repr-\name)
+    at (\i, 3)
+    {$V(t_{\name})$}
+    edge[latex-] (bert-\name)
+    edge[-latex] (L);
+}
+\end{tikzpicture}
 \end{frame}
 
 \begin{frame}{Domain adaptation without retraining}
+Adding new target domain terms for UMLS concepts:
+\begin{itemize}
+\item Encode terms with trained term-to-vector network
+\item Search over these vectors just like UMLS vectors
+\item No retraining necessary!
+\end{itemize}
+
+\pause
+\bigskip
+Evaluation data:
+\begin{description}[NCBI]
+\item[NCBI] disorders, MEDIC, PubMed abstracts
+\item[B-D] diseases, MEDIC, BioCreative V challenge
+\item[B-C] chemicals, CTD, BioCreative V challenge
+\item[S/C] disorders, UMLS, ShARe/CLEF eHealth 2013
+\item[MCN] various concepts, UMLS, 2019 n2c2 Shared-Task
+\end{description}
+\end{frame}
+
+\begin{frame}{Domain adaptation without retraining}{}
+{\small\centering
+\begin{tabular}{ l c c c c c c}
+\toprule
+Approach & NCBI & B-D & B-C  & S/C & MCN \\
+\midrule
+PMB & \alert<2>{76.6}  & \alert<2>{76.7} & \alert<2>{91.8}  & \alert<2>{73.6}  & \alert<2>{60.0} \\
+PMB + Train:O & \alert<2>{82.6}  & \alert<2>{84.4} & \alert<2>{95.8} & \alert<2>{83.5} &  \alert<2>{69.6}  \\
+PMB + Train:O + Search:T & \alert<3>{89.5} & \alert<3>{92.3} & \alert<3>{96.7} & \alert<3>{89.2} &  \alert<3>{82.2}  \\
+PMB + train per dataset & \alert<3>{91.2}  & \alert<3>{92.8}  & \alert<3>{96.9} & \alert<3>{90.4} & \alert<3>{83.7}  \\
+%Previous state-of-the-art & 91.1 & 93.2 & 96.6 & 91.1 & 83.6 \\
+\bottomrule
+\end{tabular}
+
+PMB = PubMedBERT
+
+}
+
+Findings:
+\begin{itemize}
+\item<2-> Triplet-training on ontology yields better term-to-vector network
+\item<3-> Adding new domain terms during search is nearly as good as retraining for each dataset
+\end{itemize}
 \end{frame}
 
 \section*{Summary and future work}
