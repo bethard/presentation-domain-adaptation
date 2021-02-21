@@ -343,7 +343,7 @@ Features & Source & Target & Label \\
 \end{tabular}
 };
 
-\node (model) at (5, 0) [ml model=0.8, label={Learned Model}];
+\node (model) at (4.8, 0) [ml model=0.8, label={Learned Model}];
 
 \draw[ultra thick, -latex]  (source-docs) -- (source-features);
 \draw[ultra thick, -latex]  (source-features.east)  -- (model);
@@ -430,11 +430,21 @@ Labels  \\
 }
 \end{tikzpicture}
 
+\begin{columns}
+\begin{column}{0.53\textwidth}
 Assumptions:
 \begin{itemize}
 \item Source shares labeled text
 \item Target has raw text
 \end{itemize}
+\end{column}
+\begin{column}<5->{0.45\textwidth}
+Dangers:
+\begin{itemize}
+\item Poor pseudo-labels
+\end{itemize}
+\end{column}
+\end{columns}
 \end{frame}
 
 
@@ -664,7 +674,8 @@ Labels  \\
 \bigskip
 Results:
 \begin{itemize}
-\item XX gain on negation, YY gain on time expressions
+\item +4.7 $F_1$ on negation (rank 2)
+\item no gain on time expressions
 \end{itemize}
 \end{frame}
 
@@ -675,15 +686,15 @@ Results:
   data/.style={font=\footnotesize, inner sep=0pt},
 ]
 
-\node (provided-model) at (4, 1.4) [ml model=0.8, label={Provided Model}];
+\node (provided-model) at (4, 1.35) [ml model=0.8, label={Provided Model}];
 
-\node[doc,label={Target Domain}] (target-docs) at (-2, 1.4) {?};
+\node[doc,label={Target Domain}] (target-docs) at (-2, 1.35) {?};
 
-\node (human) at (-2, -1.4)  {\includegraphics[scale=0.5]{female-user.pdf}};
+\node (human) at (-2, -1.35)  {\includegraphics[scale=0.5]{female-user.pdf}};
 
-\draw[ultra thick, -latex,align=center]  (target-docs) --  node[auto,swap,pos=0.75] {Select $k$ \\ by XX} (human);
+\draw[ultra thick, -latex,align=center]  (target-docs) --  node[auto,swap,pos=0.8] {Select $k$ \\ by XX} (human);
 
-\node[data,anchor=west] (target-features) at (0, 1.4) {
+\node[data,anchor=west] (target-features) at (0, 1.35) {
 \setlength{\tabcolsep}{0.5em}
 \begin{tabular}{@{} c @{}}
 \toprule
@@ -698,7 +709,7 @@ Features  \\
 
 \draw[ultra thick, -latex]  (target-docs) -- (target-features);
 
-\node[data,anchor=west] (target-labels) at (0, -1.4) {
+\node[data,anchor=west] (target-labels) at (0, -1.35) {
 \setlength{\tabcolsep}{0.5em}
 \begin{tabular}{@{} c @{}}
 \toprule
@@ -713,7 +724,7 @@ Labels  \\
 
 \draw[ultra thick, -latex]  (human) -- (target-labels);
 
-\node (st-model) at (4, -1.4)  [ml model=0.8, label=below:{Adapted Model}];
+\node (st-model) at (4, -1.35)  [ml model=0.8, label=below:{Adapted Model}];
 
 \draw[ultra thick, -latex]  (provided-model)  -- (st-model);
 \draw[ultra thick, -latex]  (target-features)  -- (st-model);
@@ -722,7 +733,7 @@ Labels  \\
 
 Results:
 \begin{itemize}
-\item Selecting only 20 yields YY gain on time expressions
+\item +160 sentences yields +8.6 $F_1$ on time expressions
 \item No gain for any $k$ with non-expert annotators
 \end{itemize}
 
