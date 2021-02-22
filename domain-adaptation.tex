@@ -44,9 +44,6 @@
   ml model/.default={1},
 }
 
-\newcommand{\randval}{\pgfmathparse{random(0,99)/10}\pgfmathprintnumber[precision=1,fixed,fixed zerofill]{\pgfmathresult}}
-\newcommand{\randvec}{[\randval{} \randval{} \ldots]}
-
 % command for annotating words in text
 % #1: drawing options
 % #2: name of entire shape
@@ -96,7 +93,7 @@ University of Arizona}
 \small
 \begin{tikzpicture}[data/.style={font=\scriptsize}]
 
-\node[data, label={Source Domain}] (source-data) at (0, 0) {
+\node[data, label={[align=center, inner sep=0pt]Source Domain\\(large labeled data)}] (source-data) at (0, 2) {
 \begin{tabular}{@{} l l @{}}
 \toprule
 Input & Output \\
@@ -109,12 +106,12 @@ Dec 5, 2007 & 2007-12-05 \\
 \end{tabular}
 };
 
-\node (model) at (5, 0) [ml model, label={Learned Model}];
+\node (model) at (4, 2) [ml model, label={Learned Model}];
 
-\draw[ultra thick, -latex]  (source-data)  -- node[align=center] {Machine \\ Learning} (model);
+\draw[ultra thick, -latex]  (source-data)  -- (model);
 
 \visible<2->{
-\node[data, label={Target Domain}, anchor=south west] (target-data) at (7, 0.5) {
+\node[data, label={[align=center, inner sep=0pt]Target Domain\\(unlabeled data)}] (target-data) at (0, -2) {
 \begin{tabular}{@{} p{9em} @{}}
 \toprule
 Input \\
@@ -126,11 +123,10 @@ Input \\
 \bottomrule
 \end{tabular}
 };
-\draw[ultra thick, -latex]  (target-data.south west)  -- (model.east);
 }
 
 \visible<3->{
-\node[data, anchor=north west] (output) at (7, -0.5) {
+\node[data] (output) at (8, -2) {
 \begin{tabular}{@{} p{9em} @{}}
 \toprule
 Output \\
@@ -143,7 +139,7 @@ Output \\
 \end{tabular}
 };
 
-\draw[ultra thick, -latex]  (model.east)  -- (output.north west);
+\draw[ultra thick, dotted, -latex]  (target-data.east)  -- (model.south)  -- (output.west);
 }
 \end{tikzpicture}
 \end{frame}
@@ -202,14 +198,12 @@ Input & \color{lightgray} Output\\
 \end{tabular}
 };
 
-\node (model) at (5, 0)  [ml model, label={Learned Model}];
+\node (model) at (6, 2)  [ml model, label={Learned Model}];
 
-\node[align=center] at (2.8, 0) {Machine \\ Learning};
+\draw[ultra thick, -latex]  (source-data)  -- (model.west);
+\draw[ultra thick, -latex]  (target-data)  -- (model.west);
 
-\draw[ultra thick, -latex]  (source-data)  -- (model);
-\draw[ultra thick, -latex]  (target-data)  -- (model);
-
-\visible<2->{\node[data, anchor=south west] (input) at (7, 0.5) {
+\visible<2->{\node[data] (input) at (4, -2) {
 \begin{tabular}{@{} p{9em} @{}}
 \toprule
 Input \\
@@ -222,7 +216,7 @@ Input \\
 \end{tabular}
 };
 
-\node[data, anchor=north west] (output) at (7, -0.5) {
+\node[data] (output) at (8, -2) {
 \begin{tabular}{@{} p{9em} @{}}
 \toprule
 Output \\
@@ -235,8 +229,7 @@ P70Y \\
 \end{tabular}
 };
 
-\draw[ultra thick, -latex]  (input.south west)  -- (model.east);
-\draw[ultra thick, -latex]  (model.east)  -- (output.north west);
+\draw[ultra thick, dotted, -latex]  (input)  -- (model.south) -- (output);
 }
 \end{tikzpicture}
 \end{frame}
@@ -595,13 +588,14 @@ In \AnnotateTwo{month}{Month-Of-Year}{January} of \AnnotateTwo{year}{Year}{2009}
 
 \pause
 \bigskip
+\small
 \begin{tabular}{@{} l l l @{}}
 \toprule
 & Negation & Time Expressions  \\
 \midrule
-Trained model & Mayo Clinic & Mayo Clinic \\
-Dev data & Partners HealthCare & News \\
-Test data & Beth Israel ICU & Food Insecurity \\
+Trained model & Mayo Clinic (10K) & Mayo Clinic (18K) \\
+Dev data & Partners HealthCare (5K) & News (2K) \\
+Test data & Beth Israel ICU (9K) & Food Insecurity (2K) \\
 \bottomrule
 \end{tabular}
 \end{frame}
@@ -615,9 +609,9 @@ Test data & Beth Israel ICU & Food Insecurity \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 System & P & R & $F_1$ & P & R & $F_1$ \\
 \midrule
-Top participant & 90.2 & 75.6 & \alert<3>{82.2} & 84.7 & 78.5 & \alert<3>{81.5} \\
-Fine-tune on dev & 90.8 & 61.1 & \alert<2-3>{73.0} & 82.7 & 78.2 & \alert<2-3>{80.4} \\
 Provided model & 91.7 & 51.6 & \alert<2>{66.0} & 84.9 & 74.6 & \alert<2>{79.4} \\
+Fine-tune on dev & 90.8 & 61.1 & \alert<2-3>{73.0} & 82.7 & 78.2 & \alert<2-3>{80.4} \\
+Top participant & 90.2 & 75.6 & \alert<3>{82.2} & 84.7 & 78.5 & \alert<3>{81.5} \\
 \bottomrule
 \end{tabular}
 
@@ -670,13 +664,16 @@ Labels  \\
 
 \draw[ultra thick, -latex]  (provided-model.south)  -- (target-labels.north);
 
+\visible<2->{
 \node (st-model) at (6, -1.5)  [ml model=0.8, label={Adapted Model}];
 
 \draw[ultra thick, -latex]  (provided-model)  -- (st-model);
 \draw[ultra thick, -latex]  (target-labels)  -- (st-model);
+}
 \end{tikzpicture}
 
 \bigskip
+\onslide<3->
 Results:
 \begin{itemize}
 \item +4.7 $F_1$ on negation (rank 2)
@@ -697,7 +694,7 @@ Results:
 
 \node (human) at (-2, -1.35)  {\includegraphics[scale=0.5]{female-user.pdf}};
 
-\draw[ultra thick, -latex,align=center]  (target-docs) --  node[auto,swap,pos=0.8] {Select $k$ \\ by XX} (human);
+\draw[ultra thick, -latex,align=center]  (target-docs) --  node[auto,swap,pos=0.8] {Select $k$ \\ by entropy} (human);
 
 \node[data,anchor=west] (target-features) at (0, 1.35) {
 \setlength{\tabcolsep}{0.5em}
@@ -729,16 +726,19 @@ Labels  \\
 
 \draw[ultra thick, -latex]  (human) -- (target-labels);
 
+\visible<2->{
 \node (st-model) at (4, -1.35)  [ml model=0.8, label=below:{Adapted Model}];
 
 \draw[ultra thick, -latex]  (provided-model)  -- (st-model);
 \draw[ultra thick, -latex]  (target-features)  -- (st-model);
 \draw[ultra thick, -latex]  (target-labels)  -- (st-model);
+}
 \end{tikzpicture}
 
+\onslide<3->
 Results:
 \begin{itemize}
-\item +160 sentences yields +8.6 $F_1$ on time expressions
+\item $k=20$ sentences yields +5.7 $F_1$ on time expressions
 \item No gain for any $k$ with non-expert annotators
 \end{itemize}
 
@@ -775,13 +775,13 @@ I felt like \AnnotateTwo[draw=ua-red]{vomiting}{\visible<2->{C0042963}}{vomiting
 \node[ua-oasis] at (9.3, 1.25) {\large UMLS};
 
 \node[align=center,ua-red] (text) at (0, 0) {head was \\ spinning \\ a little};
-\node<2->[ua-red] (text-vec) at (2.3, 0) {\small\randvec}
+\node<2->[ua-red] (text-vec) at (2.3, 0) {\small[8.2 0.4 \ldots]}
   edge[ua-red, ultra thick, latex-] (text);
 \foreach[count=\i from 0, count=\slide from 4] \term/\vec/\score in {
-    vertigo\\(C0042571)/\randvec/0.7,
-    spinning gait\\(C0427152)/\randvec/0.1,
-    head\\(C0018670)/\randvec/0.2,
-    dizziness\\(C0012833)/\randvec/0.9} {
+    vertigo\\(C0042571)/[7.4 1.2 \ldots]/0.6,
+    spinning gait\\(C0427152)/[1.2 6.5 \ldots]/0.1,
+    head\\(C0018670)/[2.7 0.4 \ldots]/0.2,
+    dizziness\\(C0012833)/[8.0 0.9 \ldots]/0.8} {
   \node[ua-oasis, align=center] (umls-\i) at (9.3, -1.5*\i) {\term};
   \node<3->[ua-oasis] (umls-vec-\i) at (6.5, -1.5*\i) {\vec}
     edge[ua-oasis, ultra thick, latex-] (umls-\i);
@@ -834,13 +834,40 @@ Approach:
 \begin{frame}{Domain adaptation without retraining}
 Adding new target domain terms for UMLS concepts:
 \begin{itemize}
-\item Encode terms with trained term-to-vector network
-\item Search over these vectors just like UMLS vectors
-\item No retraining necessary!
+\item<3-> Encode terms with trained term-to-vector network
+\item<4-> Search over these vectors just like UMLS vectors
+\item<5-> No retraining necessary!
 \end{itemize}
+\medskip
 
-\pause
-\bigskip
+\begin{tikzpicture}[font=\small, inner sep=2pt, anchor=west]
+\node[align=center,ua-red] (text) at (0, 0) {head was \\ spinning \\ a little};
+\node[ua-red] (text-vec) at (2.3, 0) {\small[8.2 0.4 \ldots]}
+  edge[ua-red, ultra thick, latex-] (text);
+\foreach[count=\i from 0] \term/\vec/\score in {
+    vertigo\\(C0042571)/[7.4 1.2 \ldots]/0.6,
+    spinning gait\\(C0427152)/[1.2 6.5 \ldots]/0.1,
+    head\\(C0018670)/[2.7 0.4 \ldots]/0.2/,
+    dizziness\\(C0012833)/[8.0 0.9 \ldots]/0.8/} {
+  \node[ua-oasis, align=center] (umls-\i) at (9.3, -\i) {\term};
+  \node[ua-oasis] (umls-vec-\i) at (6.5, -\i) {\vec}
+    edge[ua-oasis, ultra thick, latex-] (umls-\i);
+  \node (score-\i) at (5.2, -\i) {\score}
+    edge[ua-oasis, ultra thick, latex-] (umls-vec-\i);
+  \draw[ua-red, ultra thick, -latex] (text-vec.east) -- (score-\i.west);
+}
+\visible<2->{
+\node[ua-oasis, align=center] (umls-4) at (9.3, -4) {head spinning\\(C0012833)};
+}
+\node<3->[ua-oasis] (umls-vec-4) at (6.5, -4) {[8.1 0.5 \ldots]}
+  edge[ua-oasis, ultra thick, latex-] (umls-4);
+\node<4-> (score-4) at (5.2, -4) {0.9}
+  edge[ua-oasis, ultra thick, latex-] (umls-vec-4);
+\draw<4->[ua-red, ultra thick, -latex] (text-vec.east) -- (score-4.west);
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Domain adaptation without retraining}
 Evaluation data:
 \begin{description}[NCBI]
 \item[NCBI] disorders, MEDIC, PubMed abstracts
@@ -865,7 +892,7 @@ PMB + train per dataset & \alert<3>{91.2}  & \alert<3>{92.8}  & \alert<3>{96.9} 
 \bottomrule
 \end{tabular}
 
-PMB = PubMedBERT
+PMB = PubMedBERT; O = Ontology; T = target domain terms
 
 }
 
@@ -878,10 +905,43 @@ Findings:
 
 \section*{Summary and future work}
 
-\begin{frame}{Summary}
+\begin{frame}{Summary and future directions}
+\begin{itemize}
+\item Most domain adaptation work assumes access to source domain data
+\item In the clinical domain, often only a model can be distributed
+\item SemEval-2021 Task 10 established a new paradigm for evaluating domain adaptation
+\pause
+\item Initial promising approaches:
+\begin{itemize}
+\item Source-free self-training for negation detection
+\item Source-free active-learning for time expression recognition
+\item Source-free term-to-vector networks for concept normalization
+\end{itemize}
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Future work}
+
+\begin{frame}{Collaborators}
+\centering
+
+\begin{block}{University of Arizona}
+\begin{tabular}{c c c c }
+\includegraphics[height=0.2\textheight]{Egoitz.jpg} &
+\includegraphics[height=0.2\textheight]{Xin.jpg} &
+\includegraphics[height=0.2\textheight]{Dongfang.jpg} &
+\includegraphics[height=0.2\textheight]{Yiyun.jpg} \\
+Egoitz Laparra & Xin Su & Dongfang Xu & Yiyun Zhao
+\end{tabular}
+\end{block}
+
+\begin{block}{Harvard / Boston Children's Hospital}
+\centering
+\begin{tabular}{c @{\hspace{5em}} c}
+\includegraphics[height=0.2\textheight]{Chen.jpeg} &
+ \includegraphics[height=0.2\textheight]{Tim.jpg} \\
+Chen Lin & Tim Miller
+\end{tabular}
+\end{block}
 \end{frame}
 
 \appendix
