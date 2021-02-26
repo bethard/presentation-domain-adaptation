@@ -400,10 +400,7 @@ Features  \\
 };
 
 \draw[ultra thick, -latex]  (target-docs) -- (target-features);
-\draw[ultra thick, -latex]  (target-features.north)  -- (model);
-}
 
-\visible<3->{
 \node[data] (target-labels) at (2.5, -1.5) {
 \setlength{\tabcolsep}{0.5em}
 \begin{tabular}{@{} c @{}}
@@ -417,10 +414,10 @@ Labels  \\
 \end{tabular}
 };
 
-\draw[ultra thick, -latex]  (model)  -- (target-labels.north);
+\draw[ultra thick, dotted, -latex]  (target-features.north)  --  (model)  -- (target-labels.north);
 }
 
-\visible<4->{
+\visible<3->{
 \node (st-model) at (6, -1.5)  [ml model=0.8, label={Self-trained Model}];
 
 \draw [draw, thick] (-0.3,-2.8) rectangle (3.4,2.8);
@@ -436,7 +433,7 @@ Assumptions:
 \item Target has raw text
 \end{itemize}
 \end{column}
-\begin{column}<5->{0.45\textwidth}
+\begin{column}<4->{0.45\textwidth}
 Dangers:
 \begin{itemize}
 \item Poor pseudo-labels
@@ -647,7 +644,6 @@ Features  \\
 };
 
 \draw[ultra thick, -latex]  (target-docs) -- (target-features);
-\draw[ultra thick, -latex]  (target-features.north)  -- (provided-model.south);
 
 \node[data] (target-labels) at (2.5, -1.5) {
 \setlength{\tabcolsep}{0.5em}
@@ -662,7 +658,7 @@ Labels  \\
 \end{tabular}
 };
 
-\draw[ultra thick, -latex]  (provided-model.south)  -- (target-labels.north);
+\draw[ultra thick, dotted, -latex]  (target-features.north)  -- (provided-model.south)  -- (target-labels.north);
 
 \visible<2->{
 \node (st-model) at (6, -1.5)  [ml model=0.8, label={Adapted Model}];
@@ -907,10 +903,11 @@ Findings:
 
 \begin{frame}{Summary and future directions}
 \begin{itemize}
-\item Most domain adaptation work assumes access to source domain data
-\item In the clinical domain, often only a model can be distributed
-\item SemEval-2021 Task 10 established a new paradigm for evaluating domain adaptation
+\item Clinical NLP models do not work well out-of-the-box on new domains
+\item Research is needed on source-free domain adaptation, hence SemEval-2021 Task 10
+\item Vision: download a model, give it a few hints or some unlabeled target-domain data, and it works!
 \pause
+\bigskip
 \item Initial promising approaches:
 \begin{itemize}
 \item Source-free self-training for negation detection
