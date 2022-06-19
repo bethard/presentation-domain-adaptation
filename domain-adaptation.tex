@@ -648,10 +648,27 @@ Findings:
 \end{frame}
 
 \begin{frame}{Formalizing adaptation algorithm variants}{\cite{su-etal-2022-comparison}}
-Xin's ACL 2020 animation
 \end{frame}
 
-\begin{frame}{Evaluating adaptation algorithm variants}
+\begin{frame}{Evaluating adaptation algorithm variants}{\cite{su-etal-2022-comparison}}
+\begin{tabular}{l c c c c}
+\toprule
+& \multicolumn{2}{c}{Negation} & \multicolumn{2}{c}{Times} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Strategy & MIMIC & i2b2 & News & Food \\
+\midrule
+Source-domain model & .656 & .837 & .771 & .781 \\
+\uncover<3,5>{Self-training, reset all & .695 & .861 & .727 & .787} \\
+\uncover<3,5>{Self-training, keep all & .664 & .864 & .784 & .786} \\
+\uncover<4->{Active learning, reset all & .618 & .778 & .771 & .781} \\
+\uncover<4->{Active learning, keep all & .817 & .859 & .861 & .872} \\
+\bottomrule
+\end{tabular}
+
+\begin{itemize}
+\item<3,5> Source-free self-training: large variance, small gains
+\item<4-> Source-free active learning: consistent benefit to keeping model and data across iterations, large gains
+\end{itemize}
 \end{frame}
 
 
