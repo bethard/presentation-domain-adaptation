@@ -648,6 +648,33 @@ Findings:
 \end{frame}
 
 \begin{frame}{Formalizing adaptation algorithm variants}{\cite{su-etal-2022-comparison}}
+\begin{tikzpicture}[
+  font=\small,
+  data/.style={font=\footnotesize, inner sep=0pt},
+]
+
+\node[doc,label={Target Domain}] (target-docs) at (0, 0) {?};
+\node (model0) at (0, -4)  [ml model=0.8, label={Source Model}];
+\node<2->[doc] (annotations1) at (4, 0) {+1};
+\node<3-> (model1) at (4, -4)  [ml model=0.8];
+\node<4->[doc] (annotations2) at (8, 0) {+1};
+\node<5-> (model2) at (8, -4)  [ml model=0.8];
+\node at (8, 1.3) {\strut}; % only here for positioning
+\node at (8, -5.4) {\strut}; % only here for positioning
+
+\draw<2->[ultra thick, -latex]  (target-docs) -- (annotations1);
+\draw<2->[ultra thick, -latex]  (model0) -- (annotations1);
+\draw<3->[ultra thick, -latex]  (annotations1) -- (model1);
+\draw<3->[ultra thick, -latex]  (model0) -- (model1);
+\draw<4->[ultra thick, -latex]  (target-docs) to[bend left] (annotations2);
+\draw<4->[ultra thick, -latex]  (model1) -- (annotations2);
+\draw<6->[ultra thick, -latex, dashed]  (annotations1) -- (model2.north);
+\draw<6->[ultra thick, -latex]  (annotations2) -- (model2.north);
+\draw<7->[ultra thick, -latex, dashed]  (model0) to[bend right] (model2.west);
+\draw<7->[ultra thick, -latex, dashed]  (model1) -- (model2.west);
+
+\end{tikzpicture}
+
 \end{frame}
 
 \begin{frame}{Evaluating adaptation algorithm variants}{\cite{su-etal-2022-comparison}}
