@@ -13,6 +13,7 @@
 \usetikzlibrary{shadows}
 \usetikzlibrary{shapes}
 \usetikzlibrary{shapes.multipart}
+\usepackage[export]{adjustbox}
 
 
 % Define UA colors
@@ -539,7 +540,7 @@ Dangers:
 
 \section{Domain adaptation for clinical information extraction}
 
-\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing}
+\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing \cite{laparra-etal-2021-semeval}}
 \begin{tikzpicture}[
   font=\small,
   data/.style={font=\footnotesize, inner sep=0pt},
@@ -593,7 +594,7 @@ Label \\
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing}
+\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing \cite{laparra-etal-2021-semeval}}
 \begin{columns}
 \begin{column}{0.45\textwidth}
 \begin{block}{Task: Negation}
@@ -623,10 +624,9 @@ Test data & Beth Israel ICU (9K) & Food Insecurity (2K) \\
 \end{tabular}
 \end{frame}
 
-\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing}
+\begin{frame}{SemEval-2021 Task 10}{Source-Free Domain Adaptation for Semantic Processing \cite{laparra-etal-2021-semeval}}
 
-
-\begin{tabular}{ l c c c c c c }
+\begin{tabular}{ @{} l c c c c c c @{} }
 \toprule
 & \multicolumn{3}{c}{Negation} & \multicolumn{3}{c}{Time Expressions} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
@@ -641,130 +641,19 @@ Top participant & 90.2 & 75.6 & \alert<3>{82.2} & 84.7 & 78.5 & \alert<3>{81.5} 
 \bigskip
 Findings:
 \begin{itemize}
-\item<2-> Fine-tuning on dev domain helps; no catastrophic forgetting, and despite test domain being different
-\item<3-> Participant systems made larger gains on negation than time expressions
+\item<2-> Fine-tuning on dev domain helps; no catastrophic forgetting despite dev domain $\neq$ test domain
+\item<3-> Participant gains on negation $>$ on time expressions
+\item<4-> Many approaches; hard to isolate sources of success
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Source-free self-trained fine-tuning}
-\begin{tikzpicture}[
-  font=\small,
-  data/.style={font=\footnotesize, inner sep=0pt},
-]
-
-\node (provided-model) at (1.5, 1.5) [ml model=0.8, label={Provided Model}];
-
-\node[doc,label={Target Domain}] (target-docs) at (-2, -1.5) {?};
-
-\node[data,anchor=west] (target-features) at (0, -1.5) {
-\setlength{\tabcolsep}{0.5em}
-\begin{tabular}{@{} c @{}}
-\toprule
-Features  \\
-\midrule
-1 1 1 0 \\
-0 0 1 1 \\
-\ldots \\
-\bottomrule
-\end{tabular}
-};
-
-\draw[ultra thick, -latex]  (target-docs) -- (target-features);
-
-\node[data] (target-labels) at (2.5, -1.5) {
-\setlength{\tabcolsep}{0.5em}
-\begin{tabular}{@{} c @{}}
-\toprule
-Labels  \\
-\midrule
-+1 \\
-+1 \\
-\ldots \\
-\bottomrule
-\end{tabular}
-};
-
-\draw[ultra thick, dotted, -latex]  (target-features.north)  -- (provided-model.south)  -- (target-labels.north);
-
-\visible<2->{
-\node (st-model) at (6, -1.5)  [ml model=0.8, label={Adapted Model}];
-
-\draw[ultra thick, -latex]  (provided-model)  -- (st-model);
-\draw[ultra thick, -latex]  (target-labels)  -- (st-model);
-}
-\end{tikzpicture}
-
-\bigskip
-\onslide<3->
-Results:
-\begin{itemize}
-\item +4.7 $F_1$ on negation (rank 2)
-\item no gain on time expressions
-\end{itemize}
+\begin{frame}{Formalizing adaptation algorithm variants}{\cite{su-etal-2022-comparison}}
+Xin's ACL 2020 animation
 \end{frame}
 
-
-\begin{frame}{Source-free active-learned fine-tuning}
-\begin{tikzpicture}[
-  font=\small,
-  data/.style={font=\footnotesize, inner sep=0pt},
-]
-
-\node (provided-model) at (4, 1.35) [ml model=0.8, label={Provided Model}];
-
-\node[doc,label={Target Domain}] (target-docs) at (-2, 1.35) {?};
-
-\node (human) at (-2, -1.35)  {\includegraphics[scale=0.5]{female-user.pdf}};
-
-\draw[ultra thick, -latex,align=center]  (target-docs) --  node[auto,swap,pos=0.8] {Select $k$ \\ by entropy} (human);
-
-\node[data,anchor=west] (target-features) at (0, 1.35) {
-\setlength{\tabcolsep}{0.5em}
-\begin{tabular}{@{} c @{}}
-\toprule
-Features  \\
-\midrule
-1 1 1 0 \\
-0 0 1 1 \\
-\ldots \\
-\bottomrule
-\end{tabular}
-};
-
-\draw[ultra thick, -latex]  (target-docs) -- (target-features);
-
-\node[data,anchor=west] (target-labels) at (0, -1.35) {
-\setlength{\tabcolsep}{0.5em}
-\begin{tabular}{@{} c @{}}
-\toprule
-Labels  \\
-\midrule
-+1 \\
-+1 \\
-\ldots \\
-\bottomrule
-\end{tabular}
-};
-
-\draw[ultra thick, -latex]  (human) -- (target-labels);
-
-\visible<2->{
-\node (st-model) at (4, -1.35)  [ml model=0.8, label=below:{Adapted Model}];
-
-\draw[ultra thick, -latex]  (provided-model)  -- (st-model);
-\draw[ultra thick, -latex]  (target-features)  -- (st-model);
-\draw[ultra thick, -latex]  (target-labels)  -- (st-model);
-}
-\end{tikzpicture}
-
-\onslide<3->
-Results:
-\begin{itemize}
-\item $k=20$ sentences yields +5.7 $F_1$ on time expressions
-\item No gain for any $k$ with non-expert annotators
-\end{itemize}
-
+\begin{frame}{Evaluating adaptation algorithm variants}
 \end{frame}
+
 
 \section{Domain adaptation for clinical concept normalization}
 
@@ -814,7 +703,7 @@ I felt like \AnnotateTwo[draw=ua-red]{vomiting}{\visible<2->{C0042963}}{vomiting
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Triplet training a vector-space transformer}
+\begin{frame}{Triplet training a vector-space transformer}{\cite{xu-bethard-2021-triplet}}
 Goal: train a term-to-vector network using UMLS
 
 Approach:
@@ -828,7 +717,7 @@ Approach:
 \begin{tikzpicture}[font=\small, text only/.style={inner sep=2pt, align=center}]
 \node[text only]
   (L)
-  at (0, 4)
+  at (0, 3.7)
   {$L = \ln{(1 + e^{Sim(V(t_i), V(t_{n})) - Sim(V(t_i), V(t_{p}))} )})$};
 \foreach \i/\name/\textcolor/\phrase in {
     -4/p/ua-red/heart\\attack,
@@ -840,12 +729,12 @@ Approach:
     {$t_{\name}$ \\ \phrase};
   \node[draw, align=center, fill=yellow, fill opacity=0.5, text opacity=1]
     (bert-\name)
-    at (\i, 1.7)
+    at (\i, 1.6)
     {PubMed-BERT\\transformer}
     edge[latex-] (input-\name);
   \node[text only,text=\textcolor]
     (repr-\name)
-    at (\i, 3)
+    at (\i, 2.8)
     {$V(t_{\name})$}
     edge[latex-] (bert-\name)
     edge[-latex] (L);
@@ -853,16 +742,15 @@ Approach:
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Domain adaptation without retraining}
+\begin{frame}{Domain adaptation without retraining}{\cite{xu-bethard-2021-triplet}}
 Adding new target domain terms for UMLS concepts:
 \begin{itemize}
 \item<3-> Encode terms with trained term-to-vector network
-\item<4-> Search over these vectors just like UMLS vectors
-\item<5-> No retraining necessary!
+\item<4-> Search just like UMLS vectors; No retraining!
 \end{itemize}
 \medskip
 
-\begin{tikzpicture}[font=\small, inner sep=2pt, anchor=west]
+\begin{tikzpicture}[font=\small, inner sep=1pt, anchor=west]
 \node[align=center,ua-red] (text) at (0, 0) {head was \\ spinning \\ a little};
 \node[ua-red] (text-vec) at (2.3, 0) {\small[8.2 0.4 \ldots]}
   edge[ua-red, ultra thick, latex-] (text);
@@ -889,7 +777,7 @@ Adding new target domain terms for UMLS concepts:
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Domain adaptation without retraining}
+\begin{frame}{Domain adaptation without retraining}{\cite{xu-bethard-2021-triplet}}
 Evaluation data:
 \begin{description}[NCBI]
 \item[NCBI] disorders, MEDIC, PubMed abstracts
@@ -900,7 +788,7 @@ Evaluation data:
 \end{description}
 \end{frame}
 
-\begin{frame}{Domain adaptation without retraining}{}
+\begin{frame}{Domain adaptation without retraining}{\cite{xu-bethard-2021-triplet}}
 {\small\centering
 \begin{tabular}{ l c c c c c c}
 \toprule
@@ -929,22 +817,26 @@ Findings:
 
 \begin{frame}{Summary and future directions}
 \begin{itemize}
-\item Clinical NLP models do not work well out-of-the-box on new domains
-\item Research is needed on source-free domain adaptation, hence SemEval-2021 Task 10
-\item Vision: download a model, give it a few hints or some unlabeled target-domain data, and it works!
+\item NLP model performance degrades on new domains
+\item Research is needed on source-free domain adaptation
+\begin{itemize}
+\item SemEval-2021 Task 10 \cite{laparra-etal-2021-semeval}
+\item Systematic comparison of approaches \cite{su-etal-2022-comparison}
+\item Adapting via external knowledge \cite{xu-bethard-2021-triplet}
+\end{itemize}
 \pause
 \bigskip
-\item Initial promising approaches:
+\item Vision: download a model, give it a few hints about the target-domain, and it works!
 \begin{itemize}
-\item Source-free self-training for negation detection
-\item Source-free active-learning for time expression recognition
-\item Source-free term-to-vector networks for concept normalization
+\item Hint: here are some annotated examples
+\item Hint: these words are synonyms for these concepts
+\item Hint: this regular expression matches the entity
+\item etc.
 \end{itemize}
 \end{itemize}
 \end{frame}
 
-
-\begin{frame}{Collaborators}
+\begin{frame}{Contributors to the presented work}
 \centering
 
 \begin{block}{University of Arizona}
@@ -957,15 +849,60 @@ Egoitz Laparra & Xin Su & Dongfang Xu & Yiyun Zhao
 \end{tabular}
 \end{block}
 
-\begin{block}{Harvard / Boston Children's Hospital}
+\vspace*{-0.5\baselineskip}
+\begin{columns}[T]
+\begin{column}{0.45\textwidth}
+\begin{block}{Harvard University}
 \centering
-\begin{tabular}{c @{\hspace{5em}} c}
-\includegraphics[height=0.2\textheight]{Chen.jpeg} &
- \includegraphics[height=0.2\textheight]{Tim.jpg} \\
-Chen Lin & Tim Miller
+\begin{tabular}{c}
+\includegraphics[height=0.2\textheight]{Tim.jpg} \\
+Tim Miller
 \end{tabular}
 \end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\bigskip
+
+\includegraphics[trim=30 50 30 50, clip, height=2\baselineskip, valign=t]{nih_nlm.png} R01LM012918
+
+
+Automated Domain Adaptation for Clinical Natural Language Processing
+\end{column}
+\end{columns}
 \end{frame}
+
+\begin{frame}{Ongoing work not presented}
+
+\begin{tabular}{ @{} c p{0.85\textwidth} @{}}
+
+\includegraphics[trim=50 50 50 50, clip, height=.1\textheight, valign=t]{nih_nlm.png}
+&
+\href{https://reporter.nih.gov/project-details/9735964}{Temporal Relation Discovery for Clinical Text}
+\\[3ex]
+
+\includegraphics[trim=50 50 50 50, clip, height=.1\textheight, valign=t]{nih_nigms.jpg}
+&
+\href{https://reporter.nih.gov/project-details/10209178}{Extended Methods and Software Development for Health NLP}
+\\[4ex]
+
+\includegraphics[trim=40 20 40 20, clip, height=.15\textheight, valign=t]{nih_nci.jpg}
+&
+\href{https://reporter.nih.gov/project-details/10510666}{Using Natural Language Processing to Determine Predictors of Healthy Diet and Physical Activity Behavior Change in Ovarian Cancer Survivors}
+\\[6.5ex]
+
+\includegraphics[trim=50 50 50 50, clip, height=.1\textheight, valign=t]{nsf.png}
+&
+\href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831551}{A Data Science Platform and Mechanisms for Its Sustainability}
+\\[4ex]
+
+\includegraphics[trim=60 40 60 60, clip, height=.06\textheight, valign=t]{darpa.png}
+&
+\href{https://www.darpa.mil/program/world-modelers}{Global Reading and Assembly for Semantic, Probabilistic World Models}
+\end{tabular}
+\end{frame}
+
+
+
 
 \appendix
 

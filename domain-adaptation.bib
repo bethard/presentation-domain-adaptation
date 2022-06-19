@@ -85,3 +85,50 @@ doi = {https://doi.org/10.1016/S0079-7421(08)60536-8},
 url = {https://www.sciencedirect.com/science/article/pii/S0079742108605368},
 author = {Michael McCloskey and Neal J. Cohen},
 }
+@inproceedings{laparra-etal-2021-semeval,
+    title = "{S}em{E}val-2021 Task 10: Source-Free Domain Adaptation for Semantic Processing",
+    author = {Laparra, Egoitz  and
+      Su, Xin  and
+      Zhao, Yiyun  and
+      Uzuner, {\"O}zlem  and
+      Miller, Timothy  and
+      Bethard, Steven},
+    booktitle = "Proceedings of the 15th International Workshop on Semantic Evaluation (SemEval-2021)",
+    month = aug,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.semeval-1.42",
+    doi = "10.18653/v1/2021.semeval-1.42",
+    pages = "348--356",
+    abstract = "This paper presents the Source-Free Domain Adaptation shared task held within SemEval-2021. The aim of the task was to explore adaptation of machine-learning models in the face of data sharing constraints. Specifically, we consider the scenario where annotations exist for a domain but cannot be shared. Instead, participants are provided with models trained on that (source) data. Participants also receive some labeled data from a new (development) domain on which to explore domain adaptation algorithms. Participants are then tested on data representing a new (target) domain. We explored this scenario with two different semantic tasks: negation detection (a text classification task) and time expression recognition (a sequence tagging task).",
+}
+@inproceedings{xu-bethard-2021-triplet,
+    title = "Triplet-Trained Vector Space and Sieve-Based Search Improve Biomedical Concept Normalization",
+    author = "Xu, Dongfang  and
+      Bethard, Steven",
+    booktitle = "Proceedings of the 20th Workshop on Biomedical Language Processing",
+    month = jun,
+    year = "2021",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.bionlp-1.2",
+    doi = "10.18653/v1/2021.bionlp-1.2",
+    pages = "11--22",
+    abstract = "Concept normalization, the task of linking textual mentions of concepts to concepts in an ontology, is critical for mining and analyzing biomedical texts. We propose a vector-space model for concept normalization, where mentions and concepts are encoded via transformer networks that are trained via a triplet objective with online hard triplet mining. The transformer networks refine existing pre-trained models, and the online triplet mining makes training efficient even with hundreds of thousands of concepts by sampling training triples within each mini-batch. We introduce a variety of strategies for searching with the trained vector-space model, including approaches that incorporate domain-specific synonyms at search time with no model retraining. Across five datasets, our models that are trained only once on their corresponding ontologies are within 3 points of state-of-the-art models that are retrained for each new domain. Our models can also be trained for each domain, achieving new state-of-the-art on multiple datasets.",
+}
+@inproceedings{su-etal-2022-comparison,
+    title = "A Comparison of Strategies for Source-Free Domain Adaptation",
+    author = "Su, Xin  and
+      Zhao, Yiyun  and
+      Bethard, Steven",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-long.572",
+    doi = "10.18653/v1/2022.acl-long.572",
+    pages = "8352--8367",
+    abstract = "Data sharing restrictions are common in NLP, especially in the clinical domain, but there is limited research on adapting models to new domains without access to the original training data, a setting known as source-free domain adaptation. We take algorithms that traditionally assume access to the source-domain training data{---}active learning, self-training, and data augmentation{---}and adapt them for source free domain adaptation. Then we systematically compare these different strategies across multiple tasks and domains. We find that active learning yields consistent gains across all SemEval 2021 Task 10 tasks and domains, but though the shared task saw successful self-trained and data augmented models, our systematic comparison finds these strategies to be unreliable for source-free domain adaptation.",
+}
