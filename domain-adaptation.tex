@@ -79,7 +79,7 @@ School of Information\\
 University of Arizona}
 
 \title{Adapting machine learning models for clinical language processing}
-\date[]{26 Feb 2021}
+\date[]{20 Jun 2022}
 
 
 \begin{document}
@@ -290,7 +290,7 @@ New concepts
 \begin{itemize}
 \item Doctors notes vary wildly in format, style, and word choice depending on both medical institution and medical specialty
 \begin{itemize}
-\item E.g., for years cTAKES assumed newlines ended sentences because this was true in the Mayo Clinic EMR
+\item E.g., for years Apache cTAKES assumed newlines ended sentences because this was true in the Mayo Clinic EMR
 \end{itemize}
 \pause
 \item Data is hard to share, due to protected health information
@@ -315,10 +315,10 @@ New concepts
 
 \section{Domain adaptation comes in many forms}
 
-\begin{frame}{Taxonomy of domain adaptation}
+\begin{frame}{Taxonomy of domain adaptation}{\cite{laparra:JAMIAOpen:2020}}
 \begin{tabular}{ l l l }
 \toprule
-Souce shares & Target has & Example approach \\
+Source shares & Target has & Example approach \\
 \midrule
 \pause
 Labeled text & Labeled text & Feature augmentation \\
@@ -632,9 +632,9 @@ Test data & Beth Israel ICU (9K) & Food Insecurity (2K) \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 System & P & R & $F_1$ & P & R & $F_1$ \\
 \midrule
-Provided model & 91.7 & 51.6 & \alert<2>{66.0} & 84.9 & 74.6 & \alert<2>{79.4} \\
-Fine-tune on dev & 90.8 & 61.1 & \alert<2-3>{73.0} & 82.7 & 78.2 & \alert<2-3>{80.4} \\
-Top participant & 90.2 & 75.6 & \alert<3>{82.2} & 84.7 & 78.5 & \alert<3>{81.5} \\
+Provided model & .917 & .516 & \alert<2>{.660} & .849 & .746 & \alert<2>{.794} \\
+Fine-tune on dev & .908 & .611 & \alert<2-3>{.730} & .827 & .782 & \alert<2-3>{.804} \\
+Top participant & .902 & .756 & \alert<3>{.822} & .847 & .785 & \alert<3>{.815} \\
 \bottomrule
 \end{tabular}
 
